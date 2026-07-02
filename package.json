@@ -1,0 +1,8 @@
+{
+  "name": "medicore-workspace",
+  "version": "1.0.0",
+  "description": "Medical Core Project Workspace",
+  "scripts": {
+    "public": "node start-public.js"
+  }
+}
