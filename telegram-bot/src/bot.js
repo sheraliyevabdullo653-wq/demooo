@@ -555,7 +555,7 @@ bot.on('text', async (ctx) => {
     return ctx.reply("Iltimos, avval ro'yxatdan o'ting. /start buyrug'ini bosing.");
   }
 
-  const lang = user ? user.language : 'uz';
+  const lang = user ? user.language : (ctx.session?.reg_lang || 'uz');
   const t = locales[lang];
 
   // Cancel Handler
@@ -615,6 +615,14 @@ bot.on('text', async (ctx) => {
           ctx.session.appointment_time, 
           ctx.session.appointment_address,
           ctx.session.target_profile_id
+        );
+
+        // Also add a reminder for the doctor appointment
+        await addReminder(
+          telegramId,
+          `${ctx.session.appointment_specialty} (${matchedDoc.name})`,
+          'appointment',
+          ctx.session.appointment_time
         );
 
         await ctx.reply(t.doctor_booked.replace('{id}', id));
@@ -987,14 +995,15 @@ bot.on('contact', async (ctx) => {
 bot.on('location', async (ctx) => {
   const telegramId = ctx.from.id.toString();
   const user = await getUser(telegramId);
-  const t = locales[user.language || 'uz'];
+  const lang = user ? user.language : (ctx.session?.reg_lang || 'uz');
+  const t = locales[lang];
   const loc = ctx.message.location;
 
   if (ctx.sessionState === 'SOS_WAITING_LOCATION') {
     const msg = ctx.session.sos_message || "Tezkor SOS yordam chaqiruvi";
-    await ctx.reply(`🚨 **SOS Qabul qilindi!**\n\n📌 **Xabaringiz:** ${msg}\n📍 **Koordinatalar:** Lat: ${loc.latitude.toFixed(4)}, Lon: ${loc.longitude.toFixed(4)}\n\nTez yordam brigadasi zudlik bilan yo'lga chiqdi. Operator tez orada siz bilan bog'lanadi!\n📞 Aloqa raqami: +998 (71) 103`, { parse_mode: 'Markdown' });
+    await ctx.reply(`🚨 **SOS Qabul qilindi!**\n\n📌 **Xabaringiz:** ${msg}\n📍 **Koordinatalar:** Lat: ${loc.latitude.toFixed(4)}, Lon: ${loc.longitude.toFixed(4)}\n\nTez yordam brigadasi zudlik bilan yo'lga chiqdi. Operator tez orasida siz bilan bog'lanadi!\n📞 Aloqa raqami: +998 (71) 103`, { parse_mode: 'Markdown' });
     await ctx.setSessionState('MAIN_MENU', {});
-    await ctx.reply(t.main_menu_text, getMainMenuKeyboard(user.language, isAdminUser(telegramId)));
+    await ctx.reply(t.main_menu_text, getMainMenuKeyboard(lang, isAdminUser(telegramId)));
     return;
   }
 
@@ -1024,7 +1033,7 @@ bot.on('location', async (ctx) => {
 
     await ctx.reply(listText, { parse_mode: 'Markdown', disable_web_page_preview: true });
     await ctx.setSessionState('MAIN_MENU', {});
-    await ctx.reply(t.main_menu_text, getMainMenuKeyboard(user.language, isAdminUser(telegramId)));
+    await ctx.reply(t.main_menu_text, getMainMenuKeyboard(lang, isAdminUser(telegramId)));
     return;
   }
 });
@@ -1034,7 +1043,7 @@ bot.on('location', async (ctx) => {
 bot.on('photo', async (ctx) => {
   const telegramId = ctx.from.id.toString();
   const user = await getUser(telegramId);
-  const lang = user ? user.language : 'uz';
+  const lang = user ? user.language : (ctx.session?.reg_lang || 'uz');
   const t = locales[lang];
   const photo = ctx.message.photo;
   const fileId = photo[photo.length - 1].file_id;

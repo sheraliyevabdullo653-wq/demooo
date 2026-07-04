@@ -10,6 +10,7 @@ import Doctors from './pages/Doctors'
 import MapPage from './pages/MapPage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import AdminLogin from './pages/AdminLogin'
 import AdminPanel from './pages/AdminPanel'
 import { useAuthStore } from './store/authStore'
 import { useEffect } from 'react'
@@ -33,6 +34,7 @@ function AnimatedRoutes() {
           <Route path="/map" element={<MapPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </motion.div>
@@ -49,9 +51,11 @@ export default function App() {
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div className="relative min-h-screen">
+      <div className="relative min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
         <Navbar />
-        <AnimatedRoutes />
+        <div className="flex-grow flex flex-col">
+          <AnimatedRoutes />
+        </div>
         <Footer />
       </div>
       <Toaster

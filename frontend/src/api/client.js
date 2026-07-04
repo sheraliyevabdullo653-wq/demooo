@@ -4,7 +4,9 @@
  * which reads from the Telegram Bot's SQLite database (medicalcore.db)
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+const BASE_URL = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+  ? 'http://localhost:3001'
+  : (import.meta.env.VITE_API_URL || '');
 
 async function request(path, options = {}) {
   try {
@@ -29,64 +31,34 @@ async function request(path, options = {}) {
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 export async function loginApi({ email, password }) {
-  await new Promise(r => setTimeout(r, 600)); // fake delay
-  const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
-  const user = users.find(u => u.email === email && u.password === password);
-  if (user) {
-    const { password: _, ...safeUser } = user;
-    return { token: 'mock-jwt-' + user.email, user: safeUser };
-  }
-  // Hardcoded admin fallback
-  if (email === 'admin@admin.com' && password === 'admin') {
-    return { token: 'mock-jwt-admin', user: { id: 1, name: 'Admin', email, role: 'admin' } };
-  }
-  return null; // Let the caller handle failure, though our request wrapper used to throw.
+  return await request('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  });
 }
 
 export async function signupApi({ name, email, password }) {
-  await new Promise(r => setTimeout(r, 600));
-  const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
-  if (users.find(u => u.email === email)) {
-    return null; // email taken
-  }
-  const user = { id: Date.now(), name, email, password, role: 'user' };
-  users.push(user);
-  localStorage.setItem('mock_users', JSON.stringify(users));
-  const { password: _, ...safeUser } = user;
-  return { token: 'mock-jwt-' + email, user: safeUser };
+  return await request('/api/auth/signup', {
+    method: 'POST',
+    body: JSON.stringify({ name, email, password })
+  });
 }
 
 export async function fetchMe() {
-  const token = localStorage.getItem('token');
-  if (!token) return null;
-  const email = token.replace('mock-jwt-', '');
-  if (email === 'admin') return { id: 1, name: 'Admin', email: 'admin@admin.com', role: 'admin' };
-  
-  const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
-  const user = users.find(u => u.email === email);
-  if (!user) return null;
-  const { password: _, ...safeUser } = user;
-  return safeUser;
+  return await request('/api/auth/me');
 }
 
 // ── Admin ────────────────────────────────────────────────────────────────────
 export async function fetchAdminUsers() {
-  const users = JSON.parse(localStorage.getItem('mock_users') || '[]');
-  return users.map(u => ({ id: u.id, name: u.name, email: u.email, role: u.role }));
+  return await request('/api/admin/users');
 }
 
 export async function fetchAdminAppointments() {
-  return [
-    { id: 101, user_id: 'web_901234567', doctor_name: 'Dr. Jasur Umarov', specialty: 'Cardiologist', date_time: '2026-06-21 10:00', address: 'Toshkent sh.', status: 'pending' },
-    { id: 102, user_id: 'web_933216543', doctor_name: 'Dr. Malika Karimova', specialty: 'Pediatrician', date_time: '2026-06-22 14:30', address: 'Toshkent sh.', status: 'approved' },
-  ];
+  return await request('/api/admin/appointments');
 }
 
 export async function fetchAdminOrders() {
-  return [
-    { id: 501, user_id: 'web_901234567', items: 'Paracetamol', total_price: 15000, status: 'delivered' },
-    { id: 502, user_id: 'web_998881122', items: 'Ibuprofen', total_price: 24000, status: 'pending' },
-  ];
+  return await request('/api/admin/orders');
 }
 
 // ── Medicines ────────────────────────────────────────────────────────────────
@@ -179,12 +151,7 @@ export async function placeOrder({ name, phone, items, address }) {
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
 export async function fetchStats() {
-  return {
-    users: 12450,
-    premium_users: 850,
-    appointments: 4320,
-    orders: 1250
-  };
+  return await request('/api/stats');
 }
 
 // ── Health Check ─────────────────────────────────────────────────────────────

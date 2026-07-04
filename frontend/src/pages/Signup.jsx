@@ -107,7 +107,7 @@ export default function Signup() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 bg-green-500 hover:bg-green-600 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isLoading ? t('auth.signup_loading') : t('auth.signup_btn')}
             {!isLoading && <ArrowRight className="w-5 h-5" />}

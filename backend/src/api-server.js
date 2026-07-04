@@ -14,11 +14,10 @@ import {
   getMedicine,
   getSystemStats,
   createAppointment,
-  createOrder,
-  createWebUser,
-  getWebUserByEmail,
   getWebUserById,
   getAllWebUsers,
+  createWebUser,
+  getWebUserByEmail,
   getAllAppointments,
   getAllOrders
 } from './db.js';

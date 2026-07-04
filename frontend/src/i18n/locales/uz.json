@@ -177,7 +177,10 @@
     "has_account": "Hisobingiz bormi?",
     "logout": "Chiqish",
     "admin_panel": "Admin Panel",
-    "access_denied": "Bu sahifaga kirish huquqingiz yo'q"
+    "access_denied": "Bu sahifaga kirish huquqingiz yo'q",
+    "admin_login": "Admin Panelga kirish",
+    "admin_login_subtitle": "Administrator paroli va pochtasini kiriting",
+    "admin_login_only": "Bu sahifa faqat administratorlar uchun!"
   },
   "common": {
     "explore": "O'rganish",

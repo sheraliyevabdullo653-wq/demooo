@@ -20,7 +20,7 @@ export default function AdminPanel() {
   useEffect(() => {
     if (!authLoading && (!user || user.role !== 'admin')) {
       toast.error('Bu sahifaga kirish huquqingiz yo\'q');
-      navigate('/');
+      navigate('/admin/login');
     }
   }, [user, authLoading, navigate]);
 

@@ -30,7 +30,7 @@ const FEATURES = [
 function Blob({ className, delay = 0 }) {
   return (
     <motion.div
-      className={`absolute rounded-full blur-3xl opacity-30 dark:opacity-20 pointer-events-none ${className}`}
+      className={`hidden md:block absolute rounded-full blur-3xl opacity-30 dark:opacity-20 pointer-events-none ${className}`}
       animate={{ scale: [1, 1.15, 1], x: [0, 20, 0], y: [0, -20, 0] }}
       transition={{ duration: 8 + delay, repeat: Infinity, ease: 'easeInOut', delay }}
     />

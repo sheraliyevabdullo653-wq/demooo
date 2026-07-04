@@ -285,12 +285,12 @@ export default function Navbar() {
                       {user.name?.charAt(0) || 'U'}
                     </div>
                     <div>
-                      <p className="font-bold">{user.name}</p>
-                      <p className="text-xs text-slate-500">{user.email}</p>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">{user.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
                     </div>
                   </div>
                   {user.role === 'admin' && (
-                    <Link to="/admin" className="flex items-center gap-3 px-5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <Link to="/admin" className="flex items-center gap-3 px-5 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
                       <User size={18} /> {t('auth.admin_panel')}
                     </Link>
                   )}
@@ -300,7 +300,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3 mt-2">
-                  <Link to="/login" className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl">
+                  <Link to="/login" className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200">
                     {t('auth.login')}
                   </Link>
                   <Link to="/signup" className="flex items-center justify-center gap-2 px-4 py-3 bg-primary-500 text-white rounded-xl">

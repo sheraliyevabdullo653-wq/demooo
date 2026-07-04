@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
-import { Mail, Lock, LogIn, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ShieldAlert, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-export default function Login() {
+export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, logout, isLoading } = useAuthStore();
@@ -19,22 +19,23 @@ export default function Login() {
     if (success) {
       const currentUser = useAuthStore.getState().user;
       if (currentUser && currentUser.role === 'admin') {
-        logout();
-        toast.error('Adminlar faqat admin kirish sahifasi orqali kirishi mumkin!');
-      } else {
         toast.success(t('auth.login_success'));
-        navigate('/');
+        navigate('/admin');
+      } else {
+        // If logged in user is not admin, log them out immediately
+        logout();
+        toast.error(t('auth.admin_login_only'));
       }
     } else {
-      toast.error('Email yoki parol noto\'g\'ri'); // Still hardcoded error, since we don't have this key yet.
+      toast.error('Email yoki parol noto\'g\'ri');
     }
   };
 
   return (
     <div className="min-h-screen pt-24 pb-12 flex items-center justify-center relative overflow-hidden">
       {/* Background gradients */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500/10 dark:bg-red-500/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/15 dark:bg-blue-500/25 rounded-full blur-3xl pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -46,12 +47,12 @@ export default function Login() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", bounce: 0.5 }}
-            className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-500/30"
+            className="w-16 h-16 bg-red-500/10 dark:bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-500/30"
           >
-            <LogIn className="w-8 h-8 text-blue-400" />
+            <ShieldAlert className="w-8 h-8 text-red-500 dark:text-red-400" />
           </motion.div>
-          <h1 className="text-3xl font-bold mb-2">{t('auth.login_btn')}</h1>
-          <p className="text-slate-900 dark:text-white/60">{t('auth.login_subtitle')}</p>
+          <h1 className="text-3xl font-bold mb-2 text-slate-900 dark:text-white">{t('auth.admin_login')}</h1>
+          <p className="text-slate-900 dark:text-white/60">{t('auth.admin_login_subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -66,8 +67,8 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/30 outline-none"
-                placeholder="nom@misol.com"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/30 outline-none"
+                placeholder="admin@misol.com"
               />
             </div>
           </div>
@@ -83,7 +84,7 @@ export default function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/30 outline-none"
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/30 outline-none"
                 placeholder="••••••••"
               />
             </div>
@@ -94,25 +95,12 @@ export default function Login() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-4 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isLoading ? t('auth.login_loading') : t('auth.login_btn')}
             {!isLoading && <ArrowRight className="w-5 h-5" />}
           </motion.button>
         </form>
-
-        <p className="mt-6 text-center text-slate-900 dark:text-white/60">
-          {t('auth.no_account')}{' '}
-          <Link to="/signup" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
-            {t('auth.signup')}
-          </Link>
-        </p>
-
-        <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/10 text-center">
-          <Link to="/admin/login" className="text-xs text-slate-500 hover:text-slate-700 dark:text-white/40 dark:hover:text-white/60 transition-colors font-medium">
-            {t('auth.admin_login')}
-          </Link>
-        </div>
       </motion.div>
     </div>
   );

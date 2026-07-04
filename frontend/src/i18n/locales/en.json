@@ -149,7 +149,10 @@
     "has_account": "Already have an account?",
     "logout": "Logout",
     "admin_panel": "Admin Panel",
-    "access_denied": "You do not have permission to access this page"
+    "access_denied": "You do not have permission to access this page",
+    "admin_login": "Admin Portal Login",
+    "admin_login_subtitle": "Enter administrator credentials to proceed",
+    "admin_login_only": "This portal is restricted to administrator accounts only!"
   },
   "common": {
     "explore": "Explore",
