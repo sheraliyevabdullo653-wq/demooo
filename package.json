@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Medical Core Project Workspace",
   "scripts": {
+    "install-all": "npm install --prefix backend && npm install --prefix telegram-bot",
+    "start": "node start-production.js",
     "public": "node start-public.js"
   }
 }
