@@ -118,7 +118,7 @@ function publishBackendURL(url) {
     console.log('[System] Active backend URL-ni public KV-ga yozilmoqda...');
     const data = url;
     const req = https.request(
-      'https://kvdb.io/mc_tunnel_bucket_7653/backend_url',
+      'https://kvdb.io/sud_mctunnel7653/backend_url',
       {
         method: 'PUT',
         headers: {

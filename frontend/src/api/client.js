@@ -17,7 +17,7 @@ async function getBaseUrl() {
   } else {
     try {
       // Fetch the active localtunnel URL from the public KV database
-      const res = await fetch('https://kvdb.io/mc_tunnel_bucket_7653/backend_url');
+      const res = await fetch('https://kvdb.io/sud_mctunnel7653/backend_url');
       if (res.ok) {
         const url = await res.text();
         if (url && url.startsWith('http')) {
