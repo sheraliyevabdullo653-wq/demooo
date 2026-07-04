@@ -37,20 +37,32 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_medicore_key_2026';
 
 // ── MIDDLEWARE ──────────────────────────────────────────────────────────────
 app.use(express.json());
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://medicori-qy67e6mzt-sheraliyevabdullo653-wqs-projects.vercel.app"
-  ],
-  credentials: true,
-  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization"
-  ]
-}));
-
-app.options("*", cors());
+// Dynamic CORS middleware to accept Vercel and local requests cleanly
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  // Allow all Vercel subdomains, localhost, and other local addresses
+  if (origin && (
+    origin.endsWith('.vercel.app') || 
+    origin.startsWith('http://localhost') || 
+    origin.startsWith('http://127.0.0.1')
+  )) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    // Fallback default
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Bypass-Tunnel-Reminder');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight OPTIONS requests immediately
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 const frontendPath = path.join(__dirname, '../../frontend/dist');
 app.use(express.static(frontendPath));

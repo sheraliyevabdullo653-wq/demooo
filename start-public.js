@@ -46,11 +46,11 @@ function getPublicIP() {
   });
 }
 
-// Start tunnel
+// Start tunnel using Serveo (no warning page)
 function startTunnel(port, name) {
   return new Promise((resolve, reject) => {
-    console.log(`[Tunnel] ${name} uchun tunnel ishga tushirilmoqda (Port: ${port})...`);
-    const child = spawn('npx', ['localtunnel', '--port', port.toString()], { shell: true });
+    console.log(`[Tunnel] ${name} uchun Serveo tunnel ishga tushirilmoqda (Port: ${port})...`);
+    const child = spawn('ssh', ['-o', 'StrictHostKeyChecking=no', '-R', `80:localhost:${port}`, 'serveo.net'], { shell: true });
     let resolved = false;
 
     // Buffer to handle partial outputs
@@ -62,8 +62,8 @@ function startTunnel(port, name) {
       outputBuffer = lines.pop(); // keep unfinished line
 
       for (const line of lines) {
-        if (line.includes('your url is:')) {
-          const match = line.match(/your url is: (https:\/\/[^\s]+)/);
+        if (line.includes('Forwarding HTTP traffic from')) {
+          const match = line.match(/Forwarding HTTP traffic from (https:\/\/[^\s]+)/);
           if (match && !resolved) {
             resolved = true;
             resolve({ url: match[1], process: child });
