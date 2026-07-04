@@ -11,7 +11,11 @@ const BASE_URL = (typeof window !== 'undefined' && (window.location.hostname ===
 async function request(path, options = {}) {
   try {
     const token = localStorage.getItem('token');
-    const headers = { 'Content-Type': 'application/json', ...options.headers };
+    const headers = { 
+      'Content-Type': 'application/json', 
+      'Bypass-Tunnel-Reminder': 'true',
+      ...options.headers 
+    };
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
