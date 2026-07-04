@@ -37,11 +37,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_medicore_key_2026';
 
 // ── MIDDLEWARE ──────────────────────────────────────────────────────────────
 app.use(express.json());
-app.use(cors({
-  origin: [WEBSITE_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(cors());
 
 const frontendPath = path.join(__dirname, '../../frontend/dist');
 app.use(express.static(frontendPath));
