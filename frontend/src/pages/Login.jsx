@@ -26,7 +26,8 @@ export default function Login() {
         navigate('/');
       }
     } else {
-      toast.error('Email yoki parol noto\'g\'ri'); // Still hardcoded error, since we don't have this key yet.
+      const errorMsg = useAuthStore.getState().error || 'Email yoki parol noto\'g\'ri';
+      toast.error(errorMsg);
     }
   };
 

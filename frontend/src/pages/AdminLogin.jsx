@@ -27,7 +27,8 @@ export default function AdminLogin() {
         toast.error(t('auth.admin_login_only'));
       }
     } else {
-      toast.error('Email yoki parol noto\'g\'ri');
+      const errorMsg = useAuthStore.getState().error || 'Email yoki parol noto\'g\'ri';
+      toast.error(errorMsg);
     }
   };
 

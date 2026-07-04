@@ -25,7 +25,7 @@ async function request(path, options = {}) {
     return json.data;
   } catch (err) {
     console.warn(`[MediCore API] ${path} → ${err.message}`);
-    return null;
+    throw err;
   }
 }
 
