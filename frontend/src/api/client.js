@@ -24,6 +24,13 @@ async function request(path, options = {}) {
       headers,
       ...options,
     });
+    
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await res.text();
+      throw new Error(`Server javobi xato (status: ${res.status}): ${text.slice(0, 150)}`);
+    }
+    
     const json = await res.json();
     if (!json.success) throw new Error(json.error || 'API xatosi');
     return json.data;
