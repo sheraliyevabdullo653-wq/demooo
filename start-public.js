@@ -116,15 +116,11 @@ function runProcess(command, args, cwd, prefix, colorCode) {
 function publishBackendURL(url) {
   return new Promise((resolve) => {
     console.log('[System] Active backend URL-ni public KV-ga yozilmoqda...');
-    const data = url;
+    const hex = Buffer.from(url).toString('hex');
     const req = https.request(
-      'https://kvdb.io/sud_mctunnel7653/backend_url',
+      `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/tlqmdzup/backend_url/${hex}`,
       {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'text/plain',
-          'Content-Length': Buffer.byteLength(data)
-        }
+        method: 'POST'
       },
       (res) => {
         let responseData = '';
@@ -139,7 +135,6 @@ function publishBackendURL(url) {
       console.error('\x1b[31m[Xatolik] Backend URL-ni KV-ga yozib bo\'lmadi:\x1b[0m', err.message);
       resolve();
     });
-    req.write(data);
     req.end();
   });
 }

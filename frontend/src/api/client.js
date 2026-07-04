@@ -17,12 +17,19 @@ async function getBaseUrl() {
   } else {
     try {
       // Fetch the active localtunnel URL from the public KV database
-      const res = await fetch('https://kvdb.io/sud_mctunnel7653/backend_url');
+      const res = await fetch('https://keyvalue.immanuel.co/api/KeyVal/GetValue/tlqmdzup/backend_url');
       if (res.ok) {
-        const url = await res.text();
-        if (url && url.startsWith('http')) {
-          dynamicBaseUrl = url.trim();
-          console.log('[MediCore API] Loaded dynamic backend URL:', dynamicBaseUrl);
+        const hex = await res.json();
+        if (hex) {
+          // Convert hex back to string (URL)
+          let str = '';
+          for (let i = 0; i < hex.length; i += 2) {
+            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+          }
+          if (str && str.startsWith('http')) {
+            dynamicBaseUrl = str.trim();
+            console.log('[MediCore API] Loaded dynamic backend URL:', dynamicBaseUrl);
+          }
         }
       }
     } catch (e) {
