@@ -110,7 +110,38 @@ function runProcess(command, args, cwd, prefix, colorCode) {
     console.log(`[System] ${prefix} yopildi. Kod: ${code}`);
   });
 
-  return child;
+}
+
+// Publish backend URL to a public KV store so Vercel can fetch it dynamically
+function publishBackendURL(url) {
+  return new Promise((resolve) => {
+    console.log('[System] Active backend URL-ni public KV-ga yozilmoqda...');
+    const data = url;
+    const req = https.request(
+      'https://kvdb.io/mc_tunnel_bucket_7653/backend_url',
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'text/plain',
+          'Content-Length': Buffer.byteLength(data)
+        }
+      },
+      (res) => {
+        let responseData = '';
+        res.on('data', chunk => responseData += chunk);
+        res.on('end', () => {
+          console.log('\x1b[32m✔ Backend URL public KV db-ga yozildi!\x1b[0m');
+          resolve();
+        });
+      }
+    );
+    req.on('error', (err) => {
+      console.error('\x1b[31m[Xatolik] Backend URL-ni KV-ga yozib bo\'lmadi:\x1b[0m', err.message);
+      resolve();
+    });
+    req.write(data);
+    req.end();
+  });
 }
 
 async function main() {
@@ -125,6 +156,9 @@ async function main() {
     const backendTunnel = await startTunnel(BACKEND_PORT, 'API Server');
     console.log(`\x1b[32m✔ API Server uchun tunnel tayyor:\x1b[0m ${backendTunnel.url}`);
     processes.push(backendTunnel.process);
+    
+    // Publish backend URL to KV database
+    await publishBackendURL(backendTunnel.url);
 
     // 2. Frontend tunnel
     const frontendTunnel = await startTunnel(FRONTEND_PORT, 'Vite Frontend');

@@ -4,12 +4,41 @@
  * which reads from the Telegram Bot's SQLite database (medicalcore.db)
  */
 
-const BASE_URL = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
-  ? 'http://localhost:3001'
-  : (import.meta.env.VITE_API_URL || '');
+let dynamicBaseUrl = null;
+
+async function getBaseUrl() {
+  if (dynamicBaseUrl) return dynamicBaseUrl;
+
+  const isLocal = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+  if (isLocal) {
+    dynamicBaseUrl = 'http://localhost:3001';
+  } else {
+    try {
+      // Fetch the active localtunnel URL from the public KV database
+      const res = await fetch('https://kvdb.io/mc_tunnel_bucket_7653/backend_url');
+      if (res.ok) {
+        const url = await res.text();
+        if (url && url.startsWith('http')) {
+          dynamicBaseUrl = url.trim();
+          console.log('[MediCore API] Loaded dynamic backend URL:', dynamicBaseUrl);
+        }
+      }
+    } catch (e) {
+      console.warn('[MediCore API] Failed to fetch dynamic backend URL from KV, falling back to env');
+    }
+    
+    if (!dynamicBaseUrl) {
+      dynamicBaseUrl = import.meta.env.VITE_API_URL || '';
+    }
+  }
+  return dynamicBaseUrl;
+}
 
 async function request(path, options = {}) {
   try {
+    const activeBaseUrl = await getBaseUrl();
     const token = localStorage.getItem('token');
     const headers = { 
       'Content-Type': 'application/json', 
@@ -20,7 +49,7 @@ async function request(path, options = {}) {
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    const res = await fetch(`${BASE_URL}${path}`, {
+    const res = await fetch(`${activeBaseUrl}${path}`, {
       headers,
       ...options,
     });
@@ -171,4 +200,4 @@ export async function checkApiHealth() {
 }
 
 export const TELEGRAM_BOT_URL = 'https://t.me/Medicore1_bot';
-export const API_BASE = BASE_URL;
+export const API_BASE = 'http://localhost:3001';
