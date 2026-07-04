@@ -37,7 +37,20 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_medicore_key_2026';
 
 // ── MIDDLEWARE ──────────────────────────────────────────────────────────────
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://medicori-qy67e6mzt-sheraliyevabdullo653-wqs-projects.vercel.app"
+  ],
+  credentials: true,
+  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization"
+  ]
+}));
+
+app.options("*", cors());
 
 const frontendPath = path.join(__dirname, '../../frontend/dist');
 app.use(express.static(frontendPath));
